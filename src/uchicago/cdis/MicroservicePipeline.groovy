@@ -25,7 +25,7 @@ class MicroservicePipeline implements Serializable {
    * Deploy the current env.GIT_BRANCH to the k8s
    */
   def execute() {
-    node('ThisNode') {
+    node {
       stage('Testing123') {
         step {
           this.kubeHelper.deployBranch('sheepdog')
