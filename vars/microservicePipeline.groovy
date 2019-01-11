@@ -160,44 +160,47 @@ def call(Map config) {
           }
         }
       }
-      stage('ModifyManifest') {
-        steps {
-          script {
-            dirname = sh(script: "kubectl -n $env.KUBECTL_NAMESPACE get configmap global -o jsonpath='{.data.hostname}'", returnStdout: true)
-          }
-          dir("cdis-manifest/$dirname") {
-            withEnv(["masterBranch=$env.service:[a-zA-Z0-9._-]*", "targetBranch=$env.service:$env.quaySuffix"]) {
-              sh 'sed -i -e "s,'+"$env.masterBranch,$env.targetBranch"+',g" manifest.json && cat manifest.json'
-            }
-          }
-        }
-      }
-      stage('DbResetK8sDeploy') {
-        steps {
-          withEnv(['GEN3_NOPROXY=true', "vpc_name=qaplanetv1", "GEN3_HOME=$env.WORKSPACE/cloud-automation"]) {
-            echo "GEN3_HOME is $env.GEN3_HOME"
-            echo "CHANGE_BRANCH is $env.CHANGE_BRANCH"
-            echo "GIT_COMMIT is $env.GIT_COMMIT"
-            echo "KUBECTL_NAMESPACE is $env.KUBECTL_NAMESPACE"
-            echo "WORKSPACE is $env.WORKSPACE"
-            sh "yes | bash cloud-automation/gen3/bin/reset.sh"
-            sh "bash cloud-automation/gen3/bin/kube-setup-spark.sh"
-          }
-        }
-      }
-      stage('VerifyClusterHealth') {
-        steps {
-          withEnv(['GEN3_NOPROXY=true', "vpc_name=qaplanetv1", "GEN3_HOME=$env.WORKSPACE/cloud-automation"]) {
-            sh "bash cloud-automation/gen3/bin/kube-wait4-pods.sh"
-            sh "bash ./gen3-qa/check-pod-health.sh"
-          }
-        }
-      }
+      // stage('ModifyManifest') {
+      //   steps {
+      //     script {
+      //       dirname = sh(script: "kubectl -n $env.KUBECTL_NAMESPACE get configmap global -o jsonpath='{.data.hostname}'", returnStdout: true)
+      //     }
+      //     dir("cdis-manifest/$dirname") {
+      //       withEnv(["masterBranch=$env.service:[a-zA-Z0-9._-]*", "targetBranch=$env.service:$env.quaySuffix"]) {
+      //         sh 'sed -i -e "s,'+"$env.masterBranch,$env.targetBranch"+',g" manifest.json && cat manifest.json'
+      //       }
+      //     }
+      //   }
+      // }
+      // stage('DbResetK8sDeploy') {
+      //   steps {
+      //     withEnv(['GEN3_NOPROXY=true', "vpc_name=qaplanetv1", "GEN3_HOME=$env.WORKSPACE/cloud-automation"]) {
+      //       echo "GEN3_HOME is $env.GEN3_HOME"
+      //       echo "CHANGE_BRANCH is $env.CHANGE_BRANCH"
+      //       echo "GIT_COMMIT is $env.GIT_COMMIT"
+      //       echo "KUBECTL_NAMESPACE is $env.KUBECTL_NAMESPACE"
+      //       echo "WORKSPACE is $env.WORKSPACE"
+      //       sh "yes | bash cloud-automation/gen3/bin/reset.sh"
+      //       sh "bash cloud-automation/gen3/bin/kube-setup-spark.sh"
+      //     }
+      //   }
+      // }
+      // stage('VerifyClusterHealth') {
+      //   steps {
+      //     withEnv(['GEN3_NOPROXY=true', "vpc_name=qaplanetv1", "GEN3_HOME=$env.WORKSPACE/cloud-automation"]) {
+      //       sh "bash cloud-automation/gen3/bin/kube-wait4-pods.sh"
+      //       sh "bash ./gen3-qa/check-pod-health.sh"
+      //     }
+      //   }
+      // }
       stage('GenerateTestData') {
         // Run the data simulator
         steps {
           dir('gen3-qa') {
             withEnv(['GEN3_NOPROXY=true', "vpc_name=qaplanetv1", "GEN3_HOME=$env.WORKSPACE/cloud-automation", "NAMESPACE=$env.KUBECTL_NAMESPACE", "TEST_DATA_PATH=$env.WORKSPACE/testData/"]) {
+              println "Hello World"
+              sh "pwd"
+              sh "ls"
               sh "bash ./jenkins-simulate-data.sh $env.KUBECTL_NAMESPACE"
             }
           }
