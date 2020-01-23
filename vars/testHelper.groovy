@@ -144,6 +144,8 @@ def teardown() {
   // try to analyze junit files
   // result xml file may not exist due to pipeline or test suite failures
   try {
+    sh "pwd"
+    sh "touch test_summary.txt"
     junit "gen3-qa/output/*.xml"
   }
   catch(e) {
