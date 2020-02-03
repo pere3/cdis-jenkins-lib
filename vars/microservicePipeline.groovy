@@ -9,7 +9,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.Utils
 */
 def call(Map config) {
   node {
-    def AVAILABLE_NAMESPACES = ['jenkins-blood', 'jenkins-brain', 'jenkins-niaid', 'jenkins-dcp', 'jenkins-genomel']
+    def AVAILABLE_NAMESPACES = ['qa-dcp']
     List<String> namespaces = []
     isDocumentationOnly = false
     prLabels = null
